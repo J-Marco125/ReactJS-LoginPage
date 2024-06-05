@@ -5,21 +5,25 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
   email: {
     type: String,
-    required: true,
+    require: true,
+    trim: true,
   },
   firstName: {
     type: String,
     require: true,
+    trim: true,
   },
   lastName: {
     type: String,
-    required: true,
+    require: true,
+    trim: true,
   },
   password: {
     type: String,
-    required: true,
+    require: true,
+    trim: true,
   },
 });
-const newUser = mongoose.model("User", userSchema);
+const Users = mongoose.model("newUser", userSchema);
 
-module.exports = newUser;
+module.exports = Users;

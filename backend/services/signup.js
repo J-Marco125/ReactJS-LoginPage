@@ -1,11 +1,11 @@
-const Users = require("../models/Users.js");
+const Users = require("../models/users.js");
 
-module.exports = async (email, firstname, lastname, password) => {
+module.exports = async (email, firstName, lastName, password) => {
   try {
     await Users.create({
       email,
-      firstname,
-      lastname,
+      firstName,
+      lastName,
       password,
     });
     return true;

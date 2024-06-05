@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-
+const cor = require("cors");
 const mongoose = require("mongoose");
 const mainApps = require("../backend/routes/apps");
 
@@ -17,7 +17,7 @@ app.use("/", mainApps);
 
 //mongodb connection
 const uri = process.env.ATLAS_URI;
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(uri);
 
 const connection = mongoose.connection;
 connection.on("error", (error) =>
