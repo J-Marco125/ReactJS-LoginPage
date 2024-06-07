@@ -1,30 +1,49 @@
 const express = require("express");
 const router = express.Router();
+const bcrypt = require("bcrypt");
 
 const SignUp = require("../services/signup");
 
-router.post("/signup", async (req, res) => {
-  const email = req.body.email;
-  const firstname = req.body.firstName;
-  const lastname = req.body.lastName;
-  const password = req.body.password;
+const Users = require("../models/users");
 
-  const result = await SignUp(email, firstname, lastname, password);
+//Signup
+router.post("/signup", async (req, res) => {
+  const { email, firstName, lastName, password } = req.body;
+
+  const checkUser = await Users.findOne({ email });
   try {
-    if (!result && result === "") {
-      res.status(500).send({
-        status: result,
-        message: "Account not created!!",
-      });
+    if (checkUser) {
+      res.status(500).send("Email Already Used!!");
     } else {
-      res.status(200).send({
-        status: result,
-        message: "Sign up successfuly! ",
-      });
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      await SignUp(email, firstName, lastName, hashedPassword);
+      res.status(200).send("Account Created!!");
     }
-    return false;
+
+    return true;
   } catch (err) {
-    console.log(err);
+    res.status(400).send("Account Not Created!");
+    console.log("Error ", err);
   }
 });
+
+//LOgIn
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  const checkEmail = await Users.findOne({ email });
+  const checkPassword = await bcrypt.compare(password, checkEmail.password);
+
+  try {
+    //check Email
+    if (checkEmail && checkPassword) {
+      res.status(200).send("LogIn Success!!");
+    } else {
+      res.status(400).send("Invalid User!!");
+    }
+  } catch (err) {
+    console.log("Error " + err);
+  }
+});
+
 module.exports = router;
